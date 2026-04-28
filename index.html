@@ -1,0 +1,356 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.app{width:100%;font-family:var(--font-sans);padding:1.25rem 0 0;position:relative;overflow:hidden;min-height:100%}
+#bg-layer{position:fixed;inset:0;background-image:url('images/background.png');background-size:cover;background-position:center;background-repeat:no-repeat;opacity:.1;pointer-events:none;z-index:0}
+.bg-color{position:fixed;inset:0;background:#fef4e6;z-index:-1}
+.inner{max-width:680px;margin:0 auto;padding:0 1rem;position:relative;z-index:1}
+
+.hdr{text-align:center;margin-bottom:1.25rem}
+.hdr-eye{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:3px}
+.pip{width:6px;height:6px;border-radius:50%;background:#c8955a}
+.hdr-lbl{font-size:10px;color:#b08060;text-transform:uppercase;letter-spacing:.1em}
+.hdr h1{font-size:20px;font-weight:500;color:#3d2410}
+.hdr p{font-size:12px;color:#9c7a5e;margin-top:2px}
+
+.slot-box{border-radius:16px;overflow:hidden;border:1.5px solid #e8d5b8;background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);margin-bottom:.75rem}
+.slot-hd{background:#f5e0c0dd;padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+.slot-hd-lbl{font-size:10px;color:#7a4f2a;text-transform:uppercase;letter-spacing:.08em}
+.lights{display:flex;gap:4px}
+.lt{width:7px;height:7px;border-radius:50%;background:#e8c8a0;transition:background .15s}
+.lt.on{background:#c8955a}
+.slot-win{height:88px;overflow:hidden;position:relative;border-top:1.5px solid #e8d5b8;border-bottom:1.5px solid #e8d5b8;background:#fff8ee}
+.slot-track{position:absolute;left:0;right:0;top:0;will-change:transform}
+.slot-row{height:88px;display:flex;align-items:center;justify-content:center;padding:0 16px;background:#fff8ee}
+.slot-row span{font-size:14px;font-weight:500;color:#5a3e28;text-align:center;line-height:1.35;user-select:none}
+.fade-top{position:absolute;top:0;left:0;right:0;height:28px;background:linear-gradient(to bottom,#fff8ee,transparent);pointer-events:none;z-index:2}
+.fade-bot{position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(to top,#fff8ee,transparent);pointer-events:none;z-index:2}
+.sel-t{position:absolute;top:calc(50% - 44px);left:0;right:0;height:1.5px;background:#c8955a;opacity:.7;pointer-events:none;z-index:3}
+.sel-b{position:absolute;top:calc(50% + 43px);left:0;right:0;height:1.5px;background:#c8955a;opacity:.7;pointer-events:none;z-index:3}
+.slot-ft{padding:10px 16px;display:flex;justify-content:center;background:#fff8eecc}
+.btn-spin{font-family:var(--font-sans);font-size:14px;font-weight:500;padding:9px 32px;border-radius:11px;border:none;background:#c8955a;color:#fff;cursor:pointer;transition:background .15s,transform .1s}
+.btn-spin:hover{background:#b07840}
+.btn-spin:active{transform:scale(.97)}
+.btn-spin:disabled{background:#d4b48a;cursor:not-allowed}
+
+.rounds-lbl{text-align:center;font-size:12px;color:#7a5535;margin-bottom:.875rem;font-weight:500}
+.rounds-lbl b{color:#3d2410}
+
+.three{display:grid;grid-template-columns:150px 1fr 150px;gap:10px;align-items:start}
+
+.tips-card{background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #e8d5b8;border-radius:14px;padding:.875rem}
+.tips-hd{font-size:10px;color:#b08060;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.tip-row{font-size:11px;color:#5a3e28;line-height:1.45;padding:5px 0;border-bottom:0.5px solid #f0d5b0}
+.tip-row:last-child{border-bottom:none}
+.tip-kw{font-weight:500;color:#3d2410;display:block;margin-bottom:1px}
+
+.topic-card{background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #e8d5b8;border-radius:14px;padding:1.125rem;min-height:240px}
+.topic-card.dim{opacity:.5}
+.t-badge{display:inline-flex;align-items:center;gap:5px;background:#f5e0c0;border-radius:7px;padding:3px 9px;font-size:10px;color:#7a4f2a;margin-bottom:8px}
+.t-title{font-size:15px;font-weight:500;color:#3d2410;margin-bottom:12px;line-height:1.4}
+.t-points{list-style:none;display:flex;flex-direction:column;gap:7px}
+.t-points li{display:flex;gap:8px;font-size:12px;color:#5a3e28;line-height:1.5}
+.pt-n{min-width:18px;height:18px;border-radius:50%;background:#f0d5b0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:#7a4f2a;flex-shrink:0;margin-top:1px}
+.phase-pill{display:none;align-items:center;border-radius:7px;padding:3px 9px;font-size:10px;font-weight:500;margin-top:10px}
+.ph-prep{background:#f5e0c0;color:#7a4f2a}
+.ph-speak{background:#d5edcf;color:#3a6b2a}
+
+.timer-card{background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #e8d5b8;border-radius:14px;padding:.875rem;text-align:center}
+.tmr-lbl{font-size:10px;color:#b08060;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.tmr-ring{position:relative;display:inline-block;margin-bottom:4px}
+.tmr-txt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);line-height:1.1;text-align:center}
+.tmr-num{font-size:19px;font-weight:500;color:#3d2410}
+.tmr-sub{font-size:10px;color:#b08060;margin-top:1px}
+.tbtn{width:100%;font-family:var(--font-sans);font-size:11px;padding:7px 0;border-radius:8px;border:0.5px solid #d4b48a;background:#fef4e6;color:#5a3e28;cursor:pointer;transition:background .15s;margin-top:5px;display:block}
+.tbtn:hover{background:#f5e0c0}
+.tbtn.go{background:#6ab06a;border-color:#4a8a4a;color:#fff;font-weight:500}
+.tbtn.go:hover{background:#4a8a4a}
+.tbtn.fin{background:#f0d5b0;border-color:#c8955a;color:#7a4f2a;font-weight:500}
+.tbtn.fin:hover{background:#e0c090}
+.tbtn:disabled{opacity:.45;cursor:not-allowed}
+
+.result-box{background:#edf7eccc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #8fb87a;border-radius:12px;padding:.875rem 1.125rem;text-align:center;margin-top:.875rem;display:none}
+.result-box.show{display:block}
+.res-t{font-size:14px;font-weight:500;color:#2a5a2a;margin-bottom:3px}
+.res-s{font-size:12px;color:#4a7a4a;line-height:1.5;margin-bottom:9px}
+.res-btns{display:flex;gap:8px;justify-content:center}
+.rbtn{font-family:var(--font-sans);font-size:12px;padding:7px 16px;border-radius:8px;border:0.5px solid;cursor:pointer;transition:background .15s}
+.rbtn-m{background:#c8955a;border-color:#b07840;color:#fff;font-weight:500}
+.rbtn-m:hover{background:#b07840}
+.rbtn-s{background:#fef4e6;border-color:#d4b48a;color:#5a3e28}
+.rbtn-s:hover{background:#f5e0c0}
+
+.footer{margin-top:1.5rem;border-top:1.5px solid #e8d5b8cc;padding:.6rem 1rem;text-align:center;position:relative;z-index:1;background:#f5e0c0aa;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.footer-text{font-size:11px;color:#9c7a5e}
+</style>
+
+<div class="bg-color"></div>
+<div id="bg-layer"></div>
+
+<div class="app">
+  <div class="inner">
+    <h2 class="sr-only">Тренажёр Task 3 ОГЭ Speaking</h2>
+
+    <div class="hdr">
+      <div class="hdr-eye"><div class="pip"></div><div class="hdr-lbl">ОГЭ · Английский · 9 класс</div><div class="pip"></div></div>
+      <h1>Task 3 · Speaking trainer</h1>
+      <p>Monologue statement</p>
+    </div>
+
+    <div class="slot-box">
+      <div class="slot-hd">
+        <div class="slot-hd-lbl">Topics</div>
+        <div class="lights" id="lights">
+          <div class="lt"></div><div class="lt"></div><div class="lt"></div><div class="lt"></div><div class="lt"></div>
+        </div>
+      </div>
+      <div class="slot-win">
+        <div class="slot-track" id="slot-track"></div>
+        <div class="fade-top"></div><div class="fade-bot"></div>
+        <div class="sel-t"></div><div class="sel-b"></div>
+      </div>
+      <div class="slot-ft">
+        <button class="btn-spin" id="btn-spin" onclick="spin()">Click to choose the topic</button>
+      </div>
+    </div>
+
+    <div class="rounds-lbl">Completed cards: <b id="rcount">0</b></div>
+
+    <div class="three">
+      <div class="tips-card">
+        <div class="tips-hd">Tips</div>
+        <div class="tip-row"><span class="tip-kw">Structure</span>Introduction → 4 points → conclusion</div>
+        <div class="tip-row"><span class="tip-kw">Number of sentences</span>10–12 sentences</div>
+        <div class="tip-row"><span class="tip-kw">Connectors</span>firstly, however, besides, finally</div>
+        <div class="tip-row"><span class="tip-kw">Opinion</span>In my opinion, I believe, As for me</div>
+        <div class="tip-row"><span class="tip-kw">Conclusion</span>To sum up… / All in all…</div>
+        
+      </div>
+
+      <div class="topic-card dim" id="topic-card">
+        <div class="t-badge" id="t-badge">Topic—</div>
+        <div class="t-title" id="t-title">Click the button to get the card</div>
+        <ul class="t-points" id="t-points"></ul>
+        <div class="phase-pill" id="ph-pill"></div>
+      </div>
+
+      <div class="timer-card">
+        <div class="tmr-lbl" id="tmr-lbl">Timer</div>
+        <div class="tmr-ring">
+          <svg width="90" height="90" viewBox="0 0 90 90">
+            <circle cx="45" cy="45" r="37" fill="none" stroke="#f0d5b0" stroke-width="7"/>
+            <circle id="tmr-ring" cx="45" cy="45" r="37" fill="none" stroke="#c8955a" stroke-width="7"
+              stroke-dasharray="232" stroke-dashoffset="232" stroke-linecap="round" transform="rotate(-90 45 45)"/>
+          </svg>
+          <div class="tmr-txt">
+            <div class="tmr-num" id="tmr-num">—</div>
+            <div class="tmr-sub" id="tmr-sub"></div>
+          </div>
+        </div>
+        <button class="tbtn" id="btn-prep" onclick="startPrep()" disabled>Prepare (1:30)</button>
+        <button class="tbtn go" id="btn-go" onclick="startSpeak()" disabled>Speak (2:00)</button>
+        <button class="tbtn fin" id="btn-fin" onclick="finishSpeak()" disabled>Complete the answer</button>
+      </div>
+    </div>
+
+    <div class="result-box" id="result-box">
+      <div class="res-t" id="res-t"></div>
+      <div class="res-s" id="res-s"></div>
+      <div class="res-btns">
+        <button class="rbtn rbtn-m" onclick="spin()">New topic</button>
+        <button class="rbtn rbtn-s" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Сайт создан ВК сообществом: Агафонова Людмила|Блог учителя английского</div>
+  </div>
+</div>
+
+<script>
+const topics=[
+{id:1,t:"Your school",pts:["What your typical school day is like","What your favourite subject is, and why","What you like most about your school","What your attitude to your school life is"]},
+{id:2,t:"School holidays",pts:["When you have school holidays","What school holidays you would make longer, and why","What you enjoy doing during your school holidays","What your attitude to school holidays is"]},
+{id:3,t:"Travelling in Russia",pts:["Why people like travelling in Russia","What means of transport is the most popular, and why","What places in Russia you would like to visit","What your attitude to travelling is"]},
+{id:4,t:"Reading books",pts:["Whether reading is popular with teenagers, and why or why not","What kind of books you like reading","Why many people prefer e-books to paper books","What your attitude to reading is"]},
+{id:5,t:"Travelling",pts:["Why most people enjoy travelling","What people like doing while travelling","What place you would like to go to, and why","What your attitude to travelling is"]},
+{id:6,t:"Keeping fit",pts:["Why doing sport is very important for modern teenagers","What else besides sport young people do to keep fit","What you enjoy doing in your free time","What your attitude to doing sports activities is"]},
+{id:7,t:"Animals",pts:["What wild animals live in your region","Whether it is a good idea to keep a wild animal as a pet, and why","Why people build zoos in cities and towns","What your attitude to zoos is"]},
+{id:8,t:"School & your future",pts:["What your typical school day is like","What subjects you find most useful for your future, and why","What you are going to do when you leave school","What your attitude to school life is"]},
+{id:9,t:"Classroom vs online learning",pts:["What your weekday is like","What you like about your school most of all","Whether you prefer classroom or online learning, and why","What your attitude to your school life is"]},
+{id:10,t:"Sports at school",pts:["Why a lot of young people do sports nowadays","What sports clubs and teams there are in your school","What you do to keep fit","What your attitude to doing sports activities is"]},
+{id:11,t:"Environmental problems",pts:["Why people worry about environmental problems nowadays","What the most serious environmental problem where you live is","What young people can do to improve the ecological situation","What your attitude to environmental problems is"]},
+{id:12,t:"Pets",pts:["Why people keep pets","What pets are most popular in big cities","Whether having pets is a big responsibility, and why","What your attitude to keeping pets is"]},
+{id:13,t:"Travelling & seasons",pts:["Why most people like travelling","Which season is the best for travelling, in your opinion","What means of transport is the best for travelling, and why","What your attitude to travelling is"]},
+{id:14,t:"School subjects & exams",pts:["What you like about your school most of all","How many lessons a day you usually have","What school subjects you have chosen for your exams, and why","What your attitude to the number of subjects you have to learn is"]},
+{id:15,t:"Free time",pts:["Whether you have a lot of free time, and why or why not","What you enjoy doing in your free time","What your Sunday afternoons are like","What your attitude to planning your free time is"]},
+{id:16,t:"Films",pts:["What kinds of films modern teenagers enjoy","Where you prefer watching films: TV, Internet or cinema, and why","What film you have seen recently and what it was about","What your attitude to watching films as a way to spend free time is"]},
+{id:17,t:"School homework",pts:["How long it takes you to do your homework","What subject you usually start with, and why","Whether schoolchildren should be given more or less homework, and why","What your attitude to school homework is"]},
+{id:18,t:"TV",pts:["Why people spend time watching TV","What most teenagers prefer: watching TV or browsing the Internet, and why","Whether there is a TV programme you really like","What your attitude to watching TV as a way to spend free time is"]},
+{id:19,t:"School life",pts:["What you like most about your school","What weekday you find the most difficult, and why","What you would like to change in your school life","What your attitude to your school life is"]},
+{id:20,t:"Learning foreign languages",pts:["Why lots of people learn foreign languages nowadays","Why you have chosen to do the English exam this year","What you did to prepare for your English exam","What your attitude to learning foreign languages is"]},
+{id:21,t:"Healthy lifestyle",pts:["Why a healthy lifestyle is popular nowadays","What you do to keep fit","What sports activities are popular with teenagers in your region","What your attitude to a healthy lifestyle is"]},
+{id:22,t:"The Internet",pts:["Why today's teenagers use the Internet so much","How the Internet makes long-distance communication easier","What dangers teenagers can face when they use the Internet","What your attitude to the Internet is"]},
+{id:23,t:"Your best friend",pts:["What people need friends for","How long you and your friend have known each other","What you enjoy doing together","What your attitude to friendship is"]},
+{id:24,t:"The place where you live",pts:["What your city, town or village is famous for","What your favourite place in your city, town or village is, and why","Whether you are going to stay or move after leaving school, and why","What your attitude to your city, town or village is"]},
+{id:25,t:"TV & teenagers",pts:["Whether watching TV is a popular pastime with teenagers, and why or why not","How many hours a week you watch TV","What TV programme is the most popular within your family","What your attitude to TV is"]}
+];
+
+const ROW_H=88,CIRC=232;
+let timerInterval=null,timeLeft=0,totalTime=0,current=null,phase='idle',rounds=0,lastId=-1,animId=null,spinning=false;
+
+function buildSlot(){
+  const track=document.getElementById('slot-track');
+  track.innerHTML='';
+  [...topics,...topics,...topics,...topics,...topics].forEach(t=>{
+    const d=document.createElement('div');
+    d.className='slot-row';
+    d.innerHTML=`<span>Talk about ${t.t}</span>`;
+    track.appendChild(d);
+  });
+  setY(topics.length*ROW_H);
+}
+function setY(y){document.getElementById('slot-track').style.transform=`translateY(-${y}px)`;}
+function flickLights(on){document.querySelectorAll('.lt').forEach(l=>l.classList.toggle('on',on));}
+
+function spin(){
+  if(spinning||phase==='prep'||phase==='speak') return;
+  if(animId){cancelAnimationFrame(animId);animId=null;}
+  clearTimer();hideResult();resetTimerUI();
+  spinning=true;phase='spinning';
+  ['btn-spin','btn-prep','btn-go','btn-fin'].forEach(id=>document.getElementById(id).disabled=true);
+  document.getElementById('topic-card').classList.add('dim');
+  document.getElementById('ph-pill').style.display='none';
+
+  const pool=topics.filter(t=>t.id!==lastId);
+  const winner=pool[Math.floor(Math.random()*pool.length)];
+  const winIdx=topics.findIndex(t=>t.id===winner.id);
+  const startY=topics.length*ROW_H;
+  setY(startY);
+  const targetY=startY+(topics.length*2+winIdx)*ROW_H;
+  const duration=3800,t0=performance.now();
+  let li=0;
+  const lint=setInterval(()=>{flickLights(li%2===0);li++;},130);
+  function easeOut(t){return 1-Math.pow(1-t,3);}
+  function frame(now){
+    const p=Math.min((now-t0)/duration,1);
+    setY(startY+(targetY-startY)*easeOut(p));
+    if(p<1){animId=requestAnimationFrame(frame);}
+    else{
+      clearInterval(lint);setY(targetY);
+      flickLights(true);
+      setTimeout(()=>flickLights(false),200);
+      setTimeout(()=>flickLights(true),400);
+      setTimeout(()=>{flickLights(false);revealTopic(winner);},600);
+    }
+  }
+  animId=requestAnimationFrame(frame);
+}
+
+function revealTopic(t){
+  spinning=false;current=t;lastId=t.id;phase='ready';
+  document.getElementById('t-badge').textContent='Тема '+t.id+' из '+topics.length;
+  document.getElementById('t-title').textContent='Talk about '+t.t;
+  document.getElementById('t-points').innerHTML=t.pts.map((p,i)=>`<li><span class="pt-n">${i+1}</span><span>${p}</span></li>`).join('');
+  document.getElementById('topic-card').classList.remove('dim');
+  document.getElementById('btn-spin').disabled=false;
+  document.getElementById('btn-prep').disabled=false;
+  document.getElementById('btn-go').disabled=false;
+  setTimerFace('—','',0,0,'#c8955a');
+  document.getElementById('tmr-lbl').textContent='Timer';
+}
+
+function startPrep(){
+  if(!current) return;
+  clearTimer();phase='prep';
+  document.getElementById('btn-prep').disabled=true;
+  document.getElementById('btn-go').disabled=false;
+  document.getElementById('btn-fin').disabled=true;
+  showPill('Prepare','ph-prep');
+  document.getElementById('tmr-lbl').textContent='Prepare';
+  timeLeft=90;totalTime=90;renderTimer();
+  timerInterval=setInterval(tickTimer,1000);
+}
+
+function startSpeak(){
+  if(!current) return;
+  clearTimer();phase='speak';
+  document.getElementById('btn-prep').disabled=true;
+  document.getElementById('btn-go').disabled=true;
+  document.getElementById('btn-fin').disabled=false;
+  showPill('Speak!','ph-speak');
+  document.getElementById('tmr-lbl').textContent='Time for the answer';
+  timeLeft=120;totalTime=120;renderTimer();
+  timerInterval=setInterval(tickTimer,1000);
+}
+
+function tickTimer(){
+  if(timeLeft>0) timeLeft--;
+  renderTimer();
+  if(timeLeft<=0){clearTimer();if(phase==='prep')startSpeak();else finishSpeak();}
+}
+
+function renderTimer(){
+  const m=Math.floor(timeLeft/60),s=timeLeft%60;
+  const color=timeLeft<=15?'#d46060':(phase==='prep'?'#c8955a':'#6ab06a');
+  setTimerFace(m+':'+(s<10?'0':'')+s,'sec',totalTime-timeLeft,totalTime,color);
+}
+
+function setTimerFace(num,sub,elapsed,total,color){
+  document.getElementById('tmr-num').textContent=num;
+  document.getElementById('tmr-sub').textContent=sub;
+  const ring=document.getElementById('tmr-ring');
+  ring.style.stroke=color;
+  ring.style.strokeDashoffset=total>0?Math.round(CIRC*(1-elapsed/total)):CIRC;
+}
+
+function resetTimerUI(){
+  setTimerFace('—','',0,0,'#c8955a');
+  document.getElementById('tmr-lbl').textContent='Timer';
+}
+
+function finishSpeak(){
+  clearTimer();phase='idle';rounds++;
+  document.getElementById('rcount').textContent=rounds;
+  ['btn-prep','btn-go','btn-fin'].forEach(id=>document.getElementById(id).disabled=true);
+  document.getElementById('ph-pill').style.display='none';
+  resetTimerUI();
+  const spoke=120-timeLeft;
+  let rt,rs;
+  if(spoke>=100){rt='Perfect!';rs='You sounded confident and met the time. Keep it up !';}
+  else if(spoke>=55){rt='Nice!';rs='Try to speak a little longer — aim for 2 minutes.';}
+  else{rt='Try one more time!';rs='Tell me about each item in more detail — 2-3 sentences for each one.';}
+  document.getElementById('res-t').textContent=rt;
+  document.getElementById('res-s').textContent=rs;
+  document.getElementById('result-box').classList.add('show');
+}
+
+function showPill(txt,cls){
+  const p=document.getElementById('ph-pill');
+  p.className='phase-pill '+cls;
+  p.textContent=txt;
+  p.style.display='inline-flex';
+}
+
+function hideResult(){document.getElementById('result-box').classList.remove('show');}
+function clearTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null;}}
+
+function resetAll(){
+  clearTimer();
+  if(animId){cancelAnimationFrame(animId);animId=null;}
+  spinning=false;phase='idle';rounds=0;current=null;lastId=-1;
+  document.getElementById('rcount').textContent='0';
+  document.getElementById('topic-card').classList.add('dim');
+  document.getElementById('t-badge').textContent='Тема —';
+  document.getElementById('t-title').textContent='Нажми «Крутить барабан», чтобы получить тему';
+  document.getElementById('t-points').innerHTML='';
+  document.getElementById('ph-pill').style.display='none';
+  document.getElementById('btn-spin').disabled=false;
+  ['btn-prep','btn-go','btn-fin'].forEach(id=>document.getElementById(id).disabled=true);
+  resetTimerUI();hideResult();buildSlot();
+}
+
+buildSlot();
+</script>
