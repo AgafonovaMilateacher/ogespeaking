@@ -1,10 +1,16 @@
-
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task 3 · Speaking Trainer · ОГЭ</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
-body,html{background:#fef4e6}
 .app{width:100%;font-family:var(--font-sans,'system-ui,sans-serif');padding:1rem 0 0;background:#fef4e6;min-height:100%}
-.inner{max-width:680px;margin:0 auto;padding:0 .875rem;position:relative}
+#bg-layer{position:fixed;inset:0;background-image:url('images/background.png');background-size:cover;background-position:center;background-repeat:no-repeat;opacity:.1;pointer-events:none;z-index:0}
+.bg-color{position:fixed;inset:0;background:#fef4e6;z-index:-1}
+.inner{max-width:680px;margin:0 auto;padding:0 .875rem;position:relative;z-index:1}
 .hdr{text-align:center;margin-bottom:1rem}
 .hdr-eye{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:3px}
 .pip{width:5px;height:5px;border-radius:50%;background:#c8955a}
@@ -35,17 +41,15 @@ body,html{background:#fef4e6}
 .layout{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:520px){
   .layout{grid-template-columns:140px 1fr 140px}
-  .tips-card,.timer-card{order:0}
-  .topic-card{order:0}
 }
-.tips-card{background:#fff8ee;border:1.5px solid #e8d5b8;border-radius:14px;padding:.75rem}
+.tips-card{background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #e8d5b8;border-radius:14px;padding:.75rem}
 .tips-hd{font-size:10px;color:#b08060;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 @media(min-width:520px){.tips-grid{display:block}}
 .tip-row{font-size:11px;color:#5a3e28;line-height:1.4;padding:5px 6px 5px 0;border-bottom:0.5px solid #f0d5b0}
 .tip-row:last-child{border-bottom:none}
 .tip-kw{font-weight:500;color:#3d2410;display:block;margin-bottom:1px;font-size:11px}
-.topic-card{background:#fff8ee;border:1.5px solid #e8d5b8;border-radius:14px;padding:1rem}
+.topic-card{background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #e8d5b8;border-radius:14px;padding:1rem}
 .topic-card.dim{opacity:.5}
 .t-badge{display:inline-flex;align-items:center;background:#f5e0c0;border-radius:7px;padding:3px 9px;font-size:10px;color:#7a4f2a;margin-bottom:7px}
 .t-title{font-size:14px;font-weight:500;color:#3d2410;margin-bottom:10px;line-height:1.4}
@@ -55,7 +59,7 @@ body,html{background:#fef4e6}
 .phase-pill{display:none;align-items:center;border-radius:7px;padding:3px 9px;font-size:10px;font-weight:500;margin-top:9px}
 .ph-prep{background:#f5e0c0;color:#7a4f2a}
 .ph-speak{background:#d5edcf;color:#3a6b2a}
-.timer-card{background:#fff8ee;border:1.5px solid #e8d5b8;border-radius:14px;padding:.75rem}
+.timer-card{background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #e8d5b8;border-radius:14px;padding:.75rem}
 .timer-inner{display:flex;align-items:center;gap:12px}
 @media(min-width:520px){.timer-inner{display:block;text-align:center}}
 .tmr-lbl{font-size:10px;color:#b08060;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;display:none}
@@ -67,7 +71,6 @@ body,html{background:#fef4e6}
 .tmr-num{font-size:clamp(15px,4vw,19px);font-weight:500;color:#3d2410}
 .tmr-sub{font-size:9px;color:#b08060;margin-top:1px}
 .timer-btns{flex:1}
-@media(min-width:520px){.timer-btns{display:block}}
 .tbtn{width:100%;font-family:inherit;font-size:11px;padding:8px 0;border-radius:8px;border:0.5px solid #d4b48a;background:#fef4e6;color:#5a3e28;cursor:pointer;transition:background .15s;margin-top:5px;display:block;min-height:36px}
 .tbtn:first-child{margin-top:0}
 .tbtn:hover{background:#f5e0c0}
@@ -80,14 +83,14 @@ body,html{background:#fef4e6}
 .rec-dot{width:7px;height:7px;border-radius:50%;background:#c0392b;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .rec-indicator.active{display:flex}
-.audio-section{background:#fff8ee;border:1.5px solid #e8d5b8;border-radius:12px;padding:.75rem 1rem;display:none;margin-top:.625rem}
+.audio-section{background:#fff8eecc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #e8d5b8;border-radius:12px;padding:.75rem 1rem;display:none;margin-top:.625rem}
 .audio-section.show{display:block}
 .audio-hd{font-size:10px;color:#7a4f2a;font-weight:500;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em}
 .audio-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 audio{flex:1;min-width:0;height:36px;accent-color:#c8955a;width:100%}
 .dl-btn{font-family:inherit;font-size:11px;padding:8px 14px;border-radius:8px;background:#c8955a;color:#fff;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;font-weight:500;white-space:nowrap;min-height:36px}
 .dl-btn:hover{background:#b07840}
-.result-box{background:#edf7ec;border:1.5px solid #8fb87a;border-radius:12px;padding:.75rem 1rem;text-align:center;margin-top:.625rem;display:none}
+.result-box{background:#edf7eccc;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid #8fb87a;border-radius:12px;padding:.75rem 1rem;text-align:center;margin-top:.625rem;display:none}
 .result-box.show{display:block}
 .res-t{font-size:14px;font-weight:500;color:#2a5a2a;margin-bottom:3px}
 .res-s{font-size:12px;color:#4a7a4a;line-height:1.5;margin-bottom:9px}
@@ -97,13 +100,19 @@ audio{flex:1;min-width:0;height:36px;accent-color:#c8955a;width:100%}
 .rbtn-m:hover{background:#b07840}
 .rbtn-s{background:#fef4e6;border-color:#d4b48a;color:#5a3e28}
 .rbtn-s:hover{background:#f5e0c0}
-.footer{margin-top:1.25rem;border-top:1.5px solid #e8d5b8;padding:.5rem 1rem;text-align:center;background:#f5e0c0}
+.footer{margin-top:1.5rem;border-top:1.5px solid #e8d5b8cc;padding:.6rem 1rem;text-align:center;position:relative;z-index:1;background:#f5e0c0aa;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .footer-text{font-size:11px;color:#9c7a5e}
 </style>
+</head>
+<body>
+
+<div class="bg-color"></div>
+<div id="bg-layer"></div>
 
 <div class="app">
   <div class="inner">
-    <h2 class="sr-only">Тренажёр Task 3 ОГЭ Speaking с записью голоса</h2>
+    <h2 class="sr-only">Тренажёр Task 3 ОГЭ Speaking</h2>
+
     <div class="hdr">
       <div class="hdr-eye"><div class="pip"></div><div class="hdr-lbl">ОГЭ · Английский · 9 класс</div><div class="pip"></div></div>
       <h1>Task 3 · Speaking trainer</h1>
@@ -133,16 +142,16 @@ audio{flex:1;min-width:0;height:36px;accent-color:#c8955a;width:100%}
       <div class="tips-card">
         <div class="tips-hd">Tips</div>
         <div class="tips-grid">
-          <div class="tip-row"><span class="tip-kw">Structure</span>Intro → 4 points → conclusion</div>
-          <div class="tip-row"><span class="tip-kw">Sentences</span>10–12 sentences</div>
+          <div class="tip-row"><span class="tip-kw">Structure</span>Introduction → 4 points → conclusion</div>
+          <div class="tip-row"><span class="tip-kw">Number of sentences</span>10–12 sentences</div>
           <div class="tip-row"><span class="tip-kw">Connectors</span>firstly, however, besides, finally</div>
-          <div class="tip-row"><span class="tip-kw">Opinion</span>In my opinion, I believe…</div>
+          <div class="tip-row"><span class="tip-kw">Opinion</span>In my opinion, I believe, As for me</div>
           <div class="tip-row"><span class="tip-kw">Conclusion</span>To sum up… / All in all…</div>
         </div>
       </div>
 
       <div class="topic-card dim" id="topic-card">
-        <div class="t-badge" id="t-badge">Topic —</div>
+        <div class="t-badge" id="t-badge">Topic—</div>
         <div class="t-title" id="t-title">Click the button to get the card</div>
         <ul class="t-points" id="t-points"></ul>
         <div class="phase-pill" id="ph-pill"></div>
@@ -153,10 +162,10 @@ audio{flex:1;min-width:0;height:36px;accent-color:#c8955a;width:100%}
         <div class="timer-inner">
           <div class="tmr-ring-wrap">
             <div class="tmr-ring">
-              <svg width="80" height="80" viewBox="0 0 80 80">
-                <circle cx="40" cy="40" r="32" fill="none" stroke="#f0d5b0" stroke-width="6"/>
-                <circle id="tmr-ring" cx="40" cy="40" r="32" fill="none" stroke="#c8955a" stroke-width="6"
-                  stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)"/>
+              <svg width="90" height="90" viewBox="0 0 90 90">
+                <circle cx="45" cy="45" r="37" fill="none" stroke="#f0d5b0" stroke-width="7"/>
+                <circle id="tmr-ring" cx="45" cy="45" r="37" fill="none" stroke="#c8955a" stroke-width="7"
+                  stroke-dasharray="232" stroke-dashoffset="232" stroke-linecap="round" transform="rotate(-90 45 45)"/>
               </svg>
               <div class="tmr-txt">
                 <div class="tmr-num" id="tmr-num">—</div>
@@ -167,7 +176,7 @@ audio{flex:1;min-width:0;height:36px;accent-color:#c8955a;width:100%}
           <div class="timer-btns">
             <button class="tbtn" id="btn-prep" onclick="startPrep()" disabled>Prepare (1:30)</button>
             <button class="tbtn go" id="btn-go" onclick="startSpeak()" disabled>Speak (2:00)</button>
-            <button class="tbtn fin" id="btn-fin" onclick="finishSpeak()" disabled>Complete</button>
+            <button class="tbtn fin" id="btn-fin" onclick="finishSpeak()" disabled>Complete the answer</button>
           </div>
         </div>
         <div class="rec-indicator" id="rec-indicator">
@@ -182,7 +191,7 @@ audio{flex:1;min-width:0;height:36px;accent-color:#c8955a;width:100%}
         <audio id="audio-playback" controls></audio>
       </div>
       <div style="margin-top:8px">
-        <a class="dl-btn" id="dl-btn" download="my_speaking.webm" style="display:inline-flex">
+        <a class="dl-btn" id="dl-btn" download="my_speaking.webm">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M2 11h9" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Download recording
         </a>
@@ -233,7 +242,7 @@ const topics=[
 {id:25,t:"TV & teenagers",pts:["Whether watching TV is a popular pastime with teenagers, and why or why not","How many hours a week you watch TV","What TV programme is the most popular within your family","What your attitude to TV is"]}
 ];
 
-const ROW_H=76,CIRC=201;
+const ROW_H=76,CIRC=232;
 let timerInterval=null,timeLeft=0,totalTime=0,current=null,phase='idle',rounds=0,lastId=-1,animId=null,spinning=false;
 let mediaRecorder=null,audioChunks=[],stream=null;
 
@@ -265,7 +274,7 @@ function spin(){
   const startY=topics.length*ROW_H;
   setY(startY);
   const targetY=startY+(topics.length*2+winIdx)*ROW_H;
-  const duration=3600,t0=performance.now();
+  const duration=3800,t0=performance.now();
   let li=0;
   const lint=setInterval(()=>{flickLights(li%2===0);li++;},130);
   function easeOut(t){return 1-Math.pow(1-t,3);}
@@ -294,6 +303,7 @@ function revealTopic(t){
   document.getElementById('btn-prep').disabled=false;
   document.getElementById('btn-go').disabled=false;
   setTimerFace('—','',0,0,'#c8955a');
+  document.getElementById('tmr-lbl').textContent='Timer';
 }
 
 function startPrep(){
@@ -315,7 +325,7 @@ async function startSpeak(){
   document.getElementById('btn-go').disabled=true;
   document.getElementById('btn-fin').disabled=false;
   showPill('Speak!','ph-speak');
-  document.getElementById('tmr-lbl').textContent='Speaking';
+  document.getElementById('tmr-lbl').textContent='Time for the answer';
   timeLeft=120;totalTime=120;renderTimer();
   timerInterval=setInterval(tickTimer,1000);
   await startRecording();
@@ -409,7 +419,7 @@ function resetAll(){
   spinning=false;phase='idle';rounds=0;current=null;lastId=-1;
   document.getElementById('rcount').textContent='0';
   document.getElementById('topic-card').classList.add('dim');
-  document.getElementById('t-badge').textContent='Topic —';
+  document.getElementById('t-badge').textContent='Тема —';
   document.getElementById('t-title').textContent='Click the button to get the card';
   document.getElementById('t-points').innerHTML='';
   document.getElementById('ph-pill').style.display='none';
@@ -420,4 +430,5 @@ function resetAll(){
 
 buildSlot();
 </script>
-
+</body>
+</html>
